@@ -1,0 +1,50 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "api_tester",
+            "cwd": "api_tester",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "api_tester (profile mode)",
+            "cwd": "api_tester",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "api_tester (release mode)",
+            "cwd": "api_tester",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        
+        {
+            "name": "colan_keepit",
+            "cwd": "colan_keepit",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "colan_keepit (profile mode)",
+            "cwd": "colan_keepit",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "colan_keepit (release mode)",
+            "cwd": "colan_keepit",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        
+    ]
+}
