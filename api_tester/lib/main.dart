@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_solidart/flutter_solidart.dart';
@@ -61,6 +62,8 @@ class DebugScreenState extends State<DebugScreen> {
   String? videoUrl;
   String? errorMessage;
 
+  String get uri => '$serverURI${_urlController.text}';
+
   Future<void> fetchData() async {
     setState(() {
       responseData = null;
@@ -72,30 +75,30 @@ class DebugScreenState extends State<DebugScreen> {
     await Future<void>.delayed(const Duration(seconds: 2));
 
     try {
-      final header =
-          await http.head(Uri.parse('$serverURI${_urlController.text}'));
+      final header = await http.head(Uri.parse(uri));
       final contentType = header.headers['content-type'] ?? '';
       final contentLength = header.headers['content-length'] ?? '';
 
       if (contentType.contains('application/json')) {
-        final response =
-            await http.get(Uri.parse("$serverURI${_urlController.text}"));
+        final response = await http.get(Uri.parse(uri));
         setState(() => responseData = prettyJson(jsonDecode(response.body)));
       } else if (contentType.startsWith('text/')) {
-        final response =
-            await http.get(Uri.parse("$serverURI${_urlController.text}"));
+        final response = await http.get(Uri.parse(uri));
         setState(() => responseData = response.body);
       } else if (contentType.startsWith('image/')) {
-        setState(() => imageUrl = "$serverURI${_urlController.text}");
+        setState(() => imageUrl = uri);
       } else if (contentType.startsWith('application/vnd.apple.mpegurl')) {
-        videoUrl = "$serverURI${_urlController.text}";
+        videoUrl = uri;
 
         videoPlayerController =
-            VideoPlayerController.networkUrl(Uri.parse(videoUrl!))
-              ..initialize().then((_) {
-                // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-                setState(() {});
-              });
+            VideoPlayerController.networkUrl(Uri.parse(videoUrl!));
+
+        unawaited(
+          videoPlayerController!.initialize().then((_) {
+            // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+            setState(() {});
+          }),
+        );
         setState(() {
           videoPlayerController!.setLooping(true);
           videoPlayerController!.value.isPlaying
@@ -109,8 +112,7 @@ class DebugScreenState extends State<DebugScreen> {
       }
     } catch (e) {
       try {
-        final response =
-            await http.get(Uri.parse("$serverURI${_urlController.text}"));
+        final response = await http.get(Uri.parse(uri));
         setState(() => responseData = prettyJson(jsonDecode(response.body)));
       } catch (e) {
         /* */
