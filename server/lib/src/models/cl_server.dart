@@ -201,7 +201,7 @@ class CLServer implements Comparable<CLServer> {
       final mediaMapList = [
         for (final mediaType in types ?? ['image', 'video'])
           ...jsonDecode(
-            await getEndpoint('/media?type=$mediaType', client: client),
+            await getEndpoint('/entity?type=$mediaType', client: client),
           ) as List<dynamic>,
       ];
       return mediaMapList.map((e) => e as Map<String, dynamic>).toList();
@@ -226,7 +226,7 @@ class CLServer implements Comparable<CLServer> {
   }
 
   Future<Map<String, dynamic>> fetchMediaPage({
-    String endPoint = '/media/page',
+    String endPoint = '/entity',
     http.Client? client,
     int page = 1,
     int perPage = 20,
@@ -238,8 +238,12 @@ class CLServer implements Comparable<CLServer> {
     endPoint0 = endPoint0 + types.map((type) => 'type=$type').join('&');
     endPoint0 = '$endPoint0&per_page=$perPage';
     endPoint0 = '$endPoint0&page=$page';
-    endPoint0 = '$endPoint0&current_version=$currentVersion';
-    endPoint0 = '$endPoint0&last_synced_version=$lastSyncedVersion';
+    if (currentVersion != null) {
+      endPoint0 = '$endPoint0&current_version=$currentVersion';
+    }
+    if (lastSyncedVersion != null) {
+      endPoint0 = '$endPoint0&last_synced_version=$lastSyncedVersion';
+    }
 
     final response = await getEndpoint(endPoint0, client: client);
 

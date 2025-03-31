@@ -25,20 +25,21 @@ class RawCLEntityGalleryView extends ConsumerStatefulWidget {
   final ViewIdentifier viewIdentifier;
   final List<LabelledEntityGroups> tabs;
 
-  final Widget Function(BuildContext context, CLEntity item) itemBuilder;
+  final Widget Function(BuildContext context, CLEntityViewerMixin item)
+      itemBuilder;
 
   final Widget? Function(
     BuildContext context,
-    List<GalleryGroupCLEntity<CLEntity>> galleryMap,
-    GalleryGroupCLEntity<CLEntity> gallery,
+    List<GalleryGroupCLEntity<CLEntityViewerMixin>> galleryMap,
+    GalleryGroupCLEntity<CLEntityViewerMixin> gallery,
   ) labelBuilder;
   final List<Widget> Function(
     BuildContext,
-    List<GalleryGroupCLEntity<CLEntity>>,
+    List<GalleryGroupCLEntity<CLEntityViewerMixin>>,
   ) headerWidgetsBuilder;
   final List<Widget> Function(
     BuildContext,
-    List<GalleryGroupCLEntity<CLEntity>>,
+    List<GalleryGroupCLEntity<CLEntityViewerMixin>>,
   ) footerWidgetsBuilder;
   final int columns;
   final Widget Function(

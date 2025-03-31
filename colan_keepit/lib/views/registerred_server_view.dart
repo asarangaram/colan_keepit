@@ -133,17 +133,17 @@ class _ServerMediaListState extends ConsumerState<ServerMediaList> {
         numColumns: 5,
         entities: serverMedia.items,
         groupMethod: GroupMethod.byOriginalDate,
-        itemBuilder: (BuildContext context, CLEntity entity) {
+        itemBuilder: (BuildContext context, CLEntityViewerMixin entity) {
           // identifier should be passed from caller FIXTHIS
           return MediaPreviewWithOverlays(
-            media: entity as CLMedia,
+            media: entity as CLEntity,
             parentIdentifier: 'server',
           );
         },
         labelBuilder: (
           BuildContext context,
-          List<GalleryGroupCLEntity<CLEntity>> galleryMap,
-          GalleryGroupCLEntity<CLEntity> gallery,
+          List<GalleryGroupCLEntity<CLEntityViewerMixin>> galleryMap,
+          GalleryGroupCLEntity<CLEntityViewerMixin> gallery,
         ) {
           return gallery.label == null
               ? null
@@ -155,13 +155,13 @@ class _ServerMediaListState extends ConsumerState<ServerMediaList> {
         },
         headerWidgetsBuilder: (
           BuildContext context,
-          List<GalleryGroupCLEntity<CLEntity>> galleryMap,
+          List<GalleryGroupCLEntity<CLEntityViewerMixin>> galleryMap,
         ) {
           return [];
         },
         footerWidgetsBuilder: (
           BuildContext context,
-          List<GalleryGroupCLEntity<CLEntity>> galleryMap,
+          List<GalleryGroupCLEntity<CLEntityViewerMixin>> galleryMap,
         ) {
           return [
             if (serverMedia.isLoading)

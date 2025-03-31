@@ -18,15 +18,16 @@ class MediaPreviewWithOverlays extends StatelessWidget {
     super.key,
   });
 
-  final CLMedia media;
+  final CLEntity media;
   final String parentIdentifier;
 
   @override
   Widget build(BuildContext context) {
     return Hero(
-      tag: '$parentIdentifier /media/${media.id}',
+      tag: '$parentIdentifier /entity/${media.id}',
       child: Tooltip(
-        message: media.name,
+        message:
+            "${media.label ?? "Unnamed"}${media.description == null ? "" : "\n${media.description}"}",
         child: Stack(
           children: [
             MediaThumbnail(
@@ -54,7 +55,7 @@ class MediaPreviewWithOverlays extends StatelessWidget {
                     ),
                   ),
                 ), */
-                if (media.serverUID != null)
+                if (media.serverId != null)
                   OverlayWidgets.dimension(
                     alignment: Alignment.bottomRight,
                     sizeFactor: 0.15,
@@ -105,7 +106,7 @@ class MediaPreviewWithOverlays extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (media.isMediaCached && media.hasServerUID)
+                /* if (media.isMediaCached && media.hasServerUID)
                   OverlayWidgets.dimension(
                     alignment: Alignment.topLeft,
                     sizeFactor: 0.15,
@@ -113,7 +114,7 @@ class MediaPreviewWithOverlays extends StatelessWidget {
                       Icons.check_circle,
                       color: Colors.blue,
                     ),
-                  ),
+                  ), */
               ],
             ),
             Positioned(
@@ -121,7 +122,7 @@ class MediaPreviewWithOverlays extends StatelessWidget {
               left: 4,
               right: 4,
               child: Text(
-                media.name,
+                media.label ?? 'Unnamed',
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -147,7 +148,7 @@ class MediaThumbnail extends ConsumerWidget {
     this.overlays,
     super.key,
   });
-  final CLMedia media;
+  final CLEntity media;
   final List<OverlayWidgets>? overlays;
 
   @override
@@ -165,26 +166,15 @@ class MediaThumbnail extends ConsumerWidget {
   }
 }
 
-extension ServerPathExtOnCLMedia on CLMedia {
-  String? get mediaEndPoint => serverUID == null
+extension ServerPathExtOnCLMedia on CLEntity {
+  String? get createEndPoint => '/entity';
+  String? get updateEndPoint => '/entity/$id';
+  String? get previewEndPoint => isCollection ? null : '/entity/$id/preview';
+  String? get mediaDownloadEndPoint =>
+      isCollection ? null : '/entity/$id/download';
+  String? get entityViewEndPoint => isCollection
       ? null
-      : '/media/$serverUID/download?isOriginal=$mustDownloadOriginal';
-
-  String? get mediaStreamEndPoint {
-    if (serverUID == null) {
-      return null;
-    }
-    if (type == CLMediaType.video) {
-      return '/media/$serverUID/stream/m3u8';
-    }
-    if (type == CLMediaType.image) {
-      return '/media/$serverUID/download?isOriginal=$mustDownloadOriginal';
-    }
-    throw Exception('Unsupported');
-  }
-
-  String? get previewEndPoint =>
-      serverUID == null ? null : '/media/$serverUID/preview';
-
-  String? get mediaPostEndPoint => '/media';
+      : (type == CLMediaType.video)
+          ? '/entity/$id/stream/m3u8'
+          : '/entity/$id/download';
 }

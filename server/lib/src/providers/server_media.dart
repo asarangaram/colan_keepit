@@ -16,8 +16,8 @@ class ServerMediaNotifier extends StateNotifier<ServerMedia> {
   Future<void> initialize() async {
     if (server.canSync) {
       state = state.copyWith(isLoading: true);
-      final map =
-          await server.identity!.fetchMediaPage(perPage: 5, types: ['image']);
+      final map = await server.identity!
+          .fetchMediaPage(perPage: 5, types: ['image', 'video']);
       state = ServerMedia.fromMap(map);
     }
   }

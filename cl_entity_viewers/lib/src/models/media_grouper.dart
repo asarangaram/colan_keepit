@@ -22,12 +22,12 @@ class EntityGrouper {
 
   final GroupMethod method;
   final int columns;
-  final List<CLEntity> entities;
+  final List<CLEntityViewerMixin> entities;
 
   EntityGrouper copyWith({
     GroupMethod? method,
     int? columns,
-    List<CLEntity>? entities,
+    List<CLEntityViewerMixin>? entities,
   }) {
     return EntityGrouper(
       method: method ?? this.method,
@@ -53,7 +53,7 @@ class EntityGrouper {
   @override
   int get hashCode => method.hashCode ^ columns.hashCode ^ entities.hashCode;
 
-  List<GalleryGroupCLEntity<CLEntity>> get getGrouped {
+  List<GalleryGroupCLEntity<CLEntityViewerMixin>> get getGrouped {
     return switch (method) {
       GroupMethod.none => entities.group(columns),
       GroupMethod.byOriginalDate => entities.groupByTime(columns),

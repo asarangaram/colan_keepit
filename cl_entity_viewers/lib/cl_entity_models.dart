@@ -1,4 +1,4 @@
-export 'src/models/cl_entities.dart' show CLEntity;
+export 'src/models/cl_entities.dart' show CLEntityViewerMixin;
 export 'src/models/gallery_group.dart'
     show GalleryGroupCLEntity, GalleryGroupCLEntityListQuery;
 export 'src/models/media_grouper.dart' show GroupMethod;

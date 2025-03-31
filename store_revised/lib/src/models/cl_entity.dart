@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cl_entity_viewers/cl_entity_models.dart';
 import 'package:meta/meta.dart';
 
 import 'cl_media_type.dart';
@@ -7,12 +8,14 @@ import 'cl_media_type.dart';
 typedef ValueGetter<T> = T Function();
 
 @immutable
-class CLEntity {
-  const CLEntity({
+class CLEntity implements CLEntityViewerMixin {
+  CLEntity({
     required this.id,
     required this.isCollection,
     required this.addedDate,
     required this.updatedDate,
+    required this.isDeleted,
+    required this.serverId,
     this.label,
     this.description,
     this.parentId,
@@ -25,7 +28,43 @@ class CLEntity {
     this.width,
     this.type,
     this.extension,
-  });
+  }) {
+    if (isCollection) {
+      if (label == null) {
+        throw Exception('Collection must have label');
+      }
+    } else {
+      if (md5 == null) {
+        throw Exception('media must have md5');
+      }
+      if (fileSize == null) {
+        throw Exception('media must have fileSize');
+      }
+      if (mimeType == null) {
+        throw Exception('media must have mimeType');
+      }
+      if (extension == null) {
+        throw Exception('media must have extension');
+      }
+      if (type == null) {
+        throw Exception('media must have type');
+      } else {
+        if (type == CLMediaType.image || type == CLMediaType.video) {
+          if (height == null) {
+            throw Exception('${type!.name} must have height');
+          }
+          if (width == null) {
+            throw Exception('${type!.name} must have width');
+          }
+        }
+        if (type == CLMediaType.audio || type == CLMediaType.video) {
+          if (duration == null) {
+            throw Exception('${type!.name}  must have duration');
+          }
+        }
+      }
+    }
+  }
 
   factory CLEntity.fromMap(Map<String, dynamic> map) {
     return CLEntity(
@@ -50,6 +89,8 @@ class CLEntity {
           ? CLMediaType.fromMap(map['type'] as String)
           : null,
       extension: map['extension'] as String?,
+      isDeleted: ((map['isDeleted'] ?? 0) as int) != 0,
+      serverId: map['serverId'] as int?,
     );
   }
 
@@ -72,6 +113,8 @@ class CLEntity {
   final int? width;
   final CLMediaType? type;
   final String? extension;
+  final bool isDeleted;
+  final int? serverId;
 
   CLEntity copyWith({
     int? id,
@@ -90,31 +133,35 @@ class CLEntity {
     ValueGetter<int?>? width,
     ValueGetter<CLMediaType?>? type,
     ValueGetter<String?>? extension,
+    bool? isDeleted,
+    ValueGetter<int?>? serverId,
   }) {
     return CLEntity(
       id: id ?? this.id,
       isCollection: isCollection ?? this.isCollection,
       addedDate: addedDate ?? this.addedDate,
       updatedDate: updatedDate ?? this.updatedDate,
-      label: label != null ? label() : this.label,
-      description: description != null ? description() : this.description,
-      parentId: parentId != null ? parentId() : this.parentId,
-      fileSize: fileSize != null ? fileSize() : this.fileSize,
-      mimeType: mimeType != null ? mimeType() : this.mimeType,
-      md5: md5 != null ? md5() : this.md5,
-      createDate: createDate != null ? createDate() : this.createDate,
-      duration: duration != null ? duration() : this.duration,
-      height: height != null ? height() : this.height,
-      width: width != null ? width() : this.width,
-      type: type != null ? type() : this.type,
-      extension: extension != null ? extension() : this.extension,
+      label: label != null ? label.call() : this.label,
+      description: description != null ? description.call() : this.description,
+      parentId: parentId != null ? parentId.call() : this.parentId,
+      fileSize: fileSize != null ? fileSize.call() : this.fileSize,
+      mimeType: mimeType != null ? mimeType.call() : this.mimeType,
+      md5: md5 != null ? md5.call() : this.md5,
+      createDate: createDate != null ? createDate.call() : this.createDate,
+      duration: duration != null ? duration.call() : this.duration,
+      height: height != null ? height.call() : this.height,
+      width: width != null ? width.call() : this.width,
+      type: type != null ? type.call() : this.type,
+      extension: extension != null ? extension.call() : this.extension,
+      isDeleted: isDeleted ?? this.isDeleted,
+      serverId: serverId != null ? serverId.call() : this.serverId,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'isCollection': isCollection,
+      'isCollection': isCollection ? 1 : 0,
       'addedDate': addedDate.millisecondsSinceEpoch,
       'updatedDate': updatedDate.millisecondsSinceEpoch,
       'label': label,
@@ -129,6 +176,8 @@ class CLEntity {
       'width': width,
       'type': type?.toMap(),
       'extension': extension,
+      'isDeleted': isDeleted ? 1 : 0,
+      'serverId': serverId,
     };
   }
 
@@ -136,15 +185,14 @@ class CLEntity {
 
   @override
   String toString() {
-    return 'CLEntity(id: $id, isCollection: $isCollection, addedDate: $addedDate, updatedDate: $updatedDate, label: $label, description: $description, parentId: $parentId, fileSize: $fileSize, mimeType: $mimeType, md5: $md5, createDate: $createDate, duration: $duration, height: $height, width: $width, type: $type, extension: $extension)';
+    return 'CLEntity(id: $id, isCollection: $isCollection, addedDate: $addedDate, updatedDate: $updatedDate, label: $label, description: $description, parentId: $parentId, fileSize: $fileSize, mimeType: $mimeType, md5: $md5, createDate: $createDate, duration: $duration, height: $height, width: $width, type: $type, extension: $extension, isDeleted: $isDeleted, serverId: $serverId)';
   }
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(covariant CLEntity other) {
     if (identical(this, other)) return true;
 
-    return other is CLEntity &&
-        other.id == id &&
+    return other.id == id &&
         other.isCollection == isCollection &&
         other.addedDate == addedDate &&
         other.updatedDate == updatedDate &&
@@ -159,7 +207,9 @@ class CLEntity {
         other.height == height &&
         other.width == width &&
         other.type == type &&
-        other.extension == extension;
+        other.extension == extension &&
+        other.isDeleted == isDeleted &&
+        other.serverId == serverId;
   }
 
   @override
@@ -179,6 +229,23 @@ class CLEntity {
         height.hashCode ^
         width.hashCode ^
         type.hashCode ^
-        extension.hashCode;
+        extension.hashCode ^
+        isDeleted.hashCode ^
+        serverId.hashCode;
   }
+
+  @override
+  int? get entityId => id;
+
+  @override
+  bool get isLocal => serverId == null;
+
+  @override
+  bool get isRemote => serverId != null;
+
+  @override
+  bool get isMarkedDeleted => isDeleted;
+
+  @override
+  DateTime get sortDate => createDate ?? updatedDate;
 }

@@ -22,20 +22,21 @@ class CLEntityGalleryTab extends ConsumerStatefulWidget {
   final TabIdentifier tabIdentifier;
   final LabelledEntityGroups tab;
   final int columns;
-  final Widget Function(BuildContext context, CLEntity item) itemBuilder;
+  final Widget Function(BuildContext context, CLEntityViewerMixin item)
+      itemBuilder;
 
   final Widget? Function(
     BuildContext context,
-    List<GalleryGroupCLEntity<CLEntity>> galleryMap,
-    GalleryGroupCLEntity<CLEntity> gallery,
+    List<GalleryGroupCLEntity<CLEntityViewerMixin>> galleryMap,
+    GalleryGroupCLEntity<CLEntityViewerMixin> gallery,
   ) labelBuilder;
   final List<Widget> Function(
     BuildContext,
-    List<GalleryGroupCLEntity<CLEntity>>,
+    List<GalleryGroupCLEntity<CLEntityViewerMixin>>,
   ) headerWidgetsBuilder;
   final List<Widget> Function(
     BuildContext,
-    List<GalleryGroupCLEntity<CLEntity>>,
+    List<GalleryGroupCLEntity<CLEntityViewerMixin>>,
   ) footerWidgetsBuilder;
 
   @override
@@ -87,7 +88,7 @@ class CLEntityGalleryTabState extends ConsumerState<CLEntityGalleryTab> {
                 );
               }
               final gallery = galleryGroups[groupIndex];
-              return CLGrid<CLEntity>(
+              return CLGrid<CLEntityViewerMixin>(
                 itemCount: gallery.items.length,
                 columns: widget.columns,
                 itemBuilder: (context, itemIndex) {

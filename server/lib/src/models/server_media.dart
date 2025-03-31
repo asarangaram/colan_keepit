@@ -9,7 +9,6 @@ class Pagination {
   const Pagination({
     required this.currentPage,
     required this.perPage,
-    required this.totalItems,
     required this.totalPages,
   });
 
@@ -17,7 +16,6 @@ class Pagination {
     return Pagination(
       currentPage: map['currentPage'] as int,
       perPage: map['perPage'] as int,
-      totalItems: map['totalItems'] as int,
       totalPages: map['totalPages'] as int,
     );
   }
@@ -26,19 +24,17 @@ class Pagination {
       Pagination.fromMap(json.decode(source) as Map<String, dynamic>);
   final int currentPage;
   final int perPage;
-  final int totalItems;
+
   final int totalPages;
 
   Pagination copyWith({
     int? currentPage,
     int? perPage,
-    int? totalItems,
     int? totalPages,
   }) {
     return Pagination(
       currentPage: currentPage ?? this.currentPage,
       perPage: perPage ?? this.perPage,
-      totalItems: totalItems ?? this.totalItems,
       totalPages: totalPages ?? this.totalPages,
     );
   }
@@ -47,7 +43,6 @@ class Pagination {
     return <String, dynamic>{
       'currentPage': currentPage,
       'perPage': perPage,
-      'totalItems': totalItems,
       'totalPages': totalPages,
     };
   }
@@ -56,7 +51,7 @@ class Pagination {
 
   @override
   String toString() {
-    return 'Pagination(currentPage: $currentPage, perPage: $perPage, totalItems: $totalItems, totalPages: $totalPages)';
+    return 'Pagination(currentPage: $currentPage, perPage: $perPage, totalPages: $totalPages)';
   }
 
   @override
@@ -65,16 +60,12 @@ class Pagination {
 
     return other.currentPage == currentPage &&
         other.perPage == perPage &&
-        other.totalItems == totalItems &&
         other.totalPages == totalPages;
   }
 
   @override
   int get hashCode {
-    return currentPage.hashCode ^
-        perPage.hashCode ^
-        totalItems.hashCode ^
-        totalPages.hashCode;
+    return currentPage.hashCode ^ perPage.hashCode ^ totalPages.hashCode;
   }
 
   bool get hasNext => currentPage < totalPages;
@@ -87,14 +78,16 @@ class MetaInfo {
     required this.lastSyncedVersion,
     required this.latestVersion,
     required this.pagination,
+    required this.totalItem,
   });
 
   factory MetaInfo.fromMap(Map<String, dynamic> map) {
     return MetaInfo(
-      currentVersion: map['currentVersion'] as int,
-      lastSyncedVersion: map['lastSyncedVersion'] as int,
-      latestVersion: map['latestVersion'] as int,
+      currentVersion: (map['currentVersion'] ?? 0) as int,
+      lastSyncedVersion: (map['lastSyncedVersion'] ?? 0) as int,
+      latestVersion: (map['latestVersion'] ?? 0) as int,
       pagination: Pagination.fromMap(map['pagination'] as Map<String, dynamic>),
+      totalItem: (map['totalItem'] ?? 0) as int,
     );
   }
 
@@ -104,18 +97,21 @@ class MetaInfo {
   final int lastSyncedVersion;
   final int latestVersion;
   final Pagination pagination;
+  final int totalItem;
 
   MetaInfo copyWith({
     int? currentVersion,
     int? lastSyncedVersion,
     int? latestVersion,
     Pagination? pagination,
+    int? totalItem,
   }) {
     return MetaInfo(
       currentVersion: currentVersion ?? this.currentVersion,
       lastSyncedVersion: lastSyncedVersion ?? this.lastSyncedVersion,
       latestVersion: latestVersion ?? this.latestVersion,
       pagination: pagination ?? this.pagination,
+      totalItem: totalItem ?? this.totalItem,
     );
   }
 
@@ -125,6 +121,7 @@ class MetaInfo {
       'lastSyncedVersion': lastSyncedVersion,
       'latestVersion': latestVersion,
       'pagination': pagination.toMap(),
+      'totalItem': totalItem,
     };
   }
 
@@ -132,7 +129,7 @@ class MetaInfo {
 
   @override
   String toString() {
-    return 'MetaInfo(currentVersion: $currentVersion, lastSyncedVersion: $lastSyncedVersion, latestVersion: $latestVersion, pagination: $pagination)';
+    return 'MetaInfo(currentVersion: $currentVersion, lastSyncedVersion: $lastSyncedVersion, latestVersion: $latestVersion, pagination: $pagination, totalItem: $totalItem)';
   }
 
   @override
@@ -142,7 +139,8 @@ class MetaInfo {
     return other.currentVersion == currentVersion &&
         other.lastSyncedVersion == lastSyncedVersion &&
         other.latestVersion == latestVersion &&
-        other.pagination == pagination;
+        other.pagination == pagination &&
+        other.totalItem == totalItem;
   }
 
   @override
@@ -150,7 +148,8 @@ class MetaInfo {
     return currentVersion.hashCode ^
         lastSyncedVersion.hashCode ^
         latestVersion.hashCode ^
-        pagination.hashCode;
+        pagination.hashCode ^
+        totalItem.hashCode;
   }
 }
 
@@ -164,10 +163,10 @@ class ServerMedia {
 
   factory ServerMedia.fromMap(Map<String, dynamic> map) {
     return ServerMedia(
-      items: List<CLMedia>.from(
-        (map['items'] as Iterable<dynamic>).map<CLMedia>(
+      items: List<CLEntity>.from(
+        (map['items'] as Iterable<dynamic>).map<CLEntity>(
           (x) {
-            return CLMedia.fromMap(x as Map<String, dynamic>);
+            return CLEntity.fromMap(x as Map<String, dynamic>);
           },
         ),
       ),
@@ -185,21 +184,21 @@ class ServerMedia {
         currentVersion: 0,
         lastSyncedVersion: 0,
         latestVersion: 0,
+        totalItem: 0,
         pagination: Pagination(
           currentPage: 0,
           perPage: perPage,
-          totalItems: 0,
           totalPages: 0,
         ),
       ),
     );
   }
-  final List<CLMedia> items;
+  final List<CLEntity> items;
   final MetaInfo metaInfo;
   final bool isLoading;
 
   ServerMedia copyWith({
-    List<CLMedia>? items,
+    List<CLEntity>? items,
     MetaInfo? metaInfo,
     bool? isLoading,
   }) {

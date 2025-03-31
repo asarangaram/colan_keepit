@@ -11,7 +11,7 @@ class CLEntityGridView extends StatelessWidget {
   CLEntityGridView({
     required this.viewIdentifier,
     required this.numColumns,
-    required List<CLEntity> entities,
+    required List<CLEntityViewerMixin> entities,
     required this.itemBuilder,
     required this.labelBuilder,
     required this.headerWidgetsBuilder,
@@ -40,19 +40,19 @@ class CLEntityGridView extends StatelessWidget {
   final ViewIdentifier viewIdentifier;
   final int numColumns;
 
-  final Widget Function(BuildContext, CLEntity) itemBuilder;
+  final Widget Function(BuildContext, CLEntityViewerMixin) itemBuilder;
   final Widget? Function(
     BuildContext context,
-    List<GalleryGroupCLEntity<CLEntity>> galleryMap,
-    GalleryGroupCLEntity<CLEntity> gallery,
+    List<GalleryGroupCLEntity<CLEntityViewerMixin>> galleryMap,
+    GalleryGroupCLEntity<CLEntityViewerMixin> gallery,
   ) labelBuilder;
   final List<Widget> Function(
     BuildContext context,
-    List<GalleryGroupCLEntity<CLEntity>> galleryMap,
+    List<GalleryGroupCLEntity<CLEntityViewerMixin>> galleryMap,
   ) headerWidgetsBuilder;
   final List<Widget> Function(
     BuildContext,
-    List<GalleryGroupCLEntity<CLEntity>>,
+    List<GalleryGroupCLEntity<CLEntityViewerMixin>>,
   ) footerWidgetsBuilder;
   final Widget Function(
     BuildContext, {

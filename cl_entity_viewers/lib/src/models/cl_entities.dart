@@ -3,35 +3,25 @@ import 'ext_list.dart';
 
 import 'gallery_group.dart';
 
-abstract class CLEntity {
+abstract class CLEntityViewerMixin {
+  bool get isRemote;
+  bool get isLocal;
+  /* bool get isSynced; */
   bool get isMarkedDeleted;
-  bool get isMarkedEditted;
-  bool get isMarkedForUpload;
-  //int? get getServerUID;
-  bool isContentSame(covariant CLEntity other);
+  /* bool get isMarkedEditted;
+  bool get isMarkedForUpload; */
 
-  bool get hasServerUID;
-  bool isChangedAfter(CLEntity other);
   int? get entityId;
-
-  DateTime? get entityOriginalDate;
-  DateTime get entityCreatedDate;
+  DateTime get sortDate;
 }
 
-extension Filter on List<CLEntity> {
-  Map<String, List<CLEntity>> filterByDate() {
-    final filterredMedia = <String, List<CLEntity>>{};
-    final noDate = <CLEntity>[];
+extension Filter on List<CLEntityViewerMixin> {
+  Map<String, List<CLEntityViewerMixin>> filterByDate() {
+    final filterredMedia = <String, List<CLEntityViewerMixin>>{};
+    final noDate = <CLEntityViewerMixin>[];
     for (final entry in this) {
       final String formattedDate;
-      if (entry.entityOriginalDate != null) {
-        formattedDate =
-            entry.entityOriginalDate!.toDisplayFormat(dataOnly: true);
-      } else {
-        formattedDate =
-            '${entry.entityCreatedDate.toDisplayFormat(dataOnly: true)} '
-            '(upload date)';
-      }
+      formattedDate = entry.sortDate.toDisplayFormat(dataOnly: true);
       if (!filterredMedia.containsKey(formattedDate)) {
         filterredMedia[formattedDate] = [];
       }
@@ -44,8 +34,8 @@ extension Filter on List<CLEntity> {
     return filterredMedia;
   }
 
-  List<GalleryGroupCLEntity<CLEntity>> groupByTime(int columns) {
-    final galleryGroups = <GalleryGroupCLEntity<CLEntity>>[];
+  List<GalleryGroupCLEntity<CLEntityViewerMixin>> groupByTime(int columns) {
+    final galleryGroups = <GalleryGroupCLEntity<CLEntityViewerMixin>>[];
 
     for (final entry in filterByDate().entries) {
       if (entry.value.length > columns) {
@@ -75,8 +65,8 @@ extension Filter on List<CLEntity> {
     return galleryGroups;
   }
 
-  List<GalleryGroupCLEntity<CLEntity>> group(int columns) {
-    final galleryGroups = <GalleryGroupCLEntity<CLEntity>>[];
+  List<GalleryGroupCLEntity<CLEntityViewerMixin>> group(int columns) {
+    final galleryGroups = <GalleryGroupCLEntity<CLEntityViewerMixin>>[];
 
     for (final rows in convertTo2D(columns)) {
       galleryGroups.add(
