@@ -73,12 +73,15 @@ class DebugScreenState extends State<DebugScreen> {
           await http.head(Uri.parse("$serverURI${_urlController.text}"));
       final contentType = header.headers['content-type'] ?? '';
       final contentLength = header.headers['content-length'] ?? '';
-      print(contentType);
 
       if (contentType.contains('application/json')) {
         final response =
             await http.get(Uri.parse("$serverURI${_urlController.text}"));
         setState(() => responseData = prettyJson(jsonDecode(response.body)));
+      } else if (contentType.startsWith('text/')) {
+        final response =
+            await http.get(Uri.parse("$serverURI${_urlController.text}"));
+        setState(() => responseData = response.body);
       } else if (contentType.startsWith('image/')) {
         setState(() => imageUrl = "$serverURI${_urlController.text}");
       } else if (contentType.startsWith('application/vnd.apple.mpegurl')) {
