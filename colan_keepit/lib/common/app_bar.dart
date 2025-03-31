@@ -4,8 +4,10 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MyAppBar({super.key, this.title, this.titleWidget, this.actions})
-      : assert((title != null) ^ (titleWidget != null),
-            'Must provide either title or titleWidget');
+      : assert(
+          (title != null) ^ (titleWidget != null),
+          'Must provide either title or titleWidget',
+        );
 
   final String? title;
   final Widget? titleWidget;
@@ -37,9 +39,9 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
             },
           ),
         ),
-        SizedBox(
+        const SizedBox(
           width: 8,
-        )
+        ),
       ],
     );
   }

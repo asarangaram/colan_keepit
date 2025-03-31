@@ -5,12 +5,12 @@ import 'package:store_revised/store_revised.dart';
 
 @immutable
 class ServerBasic {
-  const ServerBasic(
-      {this.previousIdentity,
-      this.identity,
-      bool isOffline = true,
-      this.workingOffline = false})
-      : canSync = !workingOffline && !isOffline && identity != null,
+  const ServerBasic({
+    this.previousIdentity,
+    this.identity,
+    bool isOffline = true,
+    this.workingOffline = false,
+  })  : canSync = !workingOffline && !isOffline && identity != null,
         isRegistered = identity != null,
         isOffline = isOffline || identity == null;
   final CLServer? identity;

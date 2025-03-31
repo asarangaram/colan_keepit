@@ -98,10 +98,11 @@ class MediaPreviewWithOverlays extends StatelessWidget {
                                   192,
                                 ), // Color for the circular container
                       ),
-                      child: Icon(clIcons.playerPlay,
-                          color: DefaultCLColors()
-                              .iconColorTransparent //FIXTHIS: CLTheme.of(context).colors.iconColorTransparent,
-                          ),
+                      child: Icon(
+                        clIcons.playerPlay,
+                        color: const DefaultCLColors()
+                            .iconColorTransparent, //FIXTHIS: CLTheme.of(context).colors.iconColorTransparent,
+                      ),
                     ),
                   ),
                 if (media.isMediaCached && media.hasServerUID)
@@ -112,7 +113,7 @@ class MediaPreviewWithOverlays extends StatelessWidget {
                       Icons.check_circle,
                       color: Colors.blue,
                     ),
-                  )
+                  ),
               ],
             ),
             Positioned(
@@ -132,7 +133,7 @@ class MediaPreviewWithOverlays extends StatelessWidget {
                           ?.increaseBrightness(0.4),
                     ),
               ),
-            )
+            ),
           ],
         ),
       ),

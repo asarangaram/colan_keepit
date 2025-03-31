@@ -14,10 +14,11 @@ enum GroupMethod {
 
 @immutable
 class EntityGrouper {
-  const EntityGrouper(
-      {this.method = GroupMethod.none,
-      this.columns = 3,
-      required this.entities});
+  const EntityGrouper({
+    required this.entities,
+    this.method = GroupMethod.none,
+    this.columns = 3,
+  });
 
   final GroupMethod method;
   final int columns;

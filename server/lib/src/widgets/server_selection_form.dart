@@ -11,8 +11,11 @@ import '../models/cl_server.dart';
 import '../providers/scanner.dart';
 
 class ServerSelectionForm extends ConsumerStatefulWidget {
-  const ServerSelectionForm(
-      {super.key, required this.onRefresh, required this.onDone});
+  const ServerSelectionForm({
+    required this.onRefresh,
+    required this.onDone,
+    super.key,
+  });
   final VoidCallback onRefresh;
   final void Function(CLServer selectedServer) onDone;
 
@@ -23,7 +26,8 @@ class ServerSelectionForm extends ConsumerStatefulWidget {
 
 class _ServerSelectionFormState extends ConsumerState<ServerSelectionForm> {
   bool enabled = true;
-  var autovalidateMode = ShadAutovalidateMode.onUserInteraction;
+  ShadAutovalidateMode autovalidateMode =
+      ShadAutovalidateMode.onUserInteraction;
   Map<Object, dynamic> formValue = {};
   final formKey = GlobalKey<ShadFormState>();
   CLServer? selectedServer;
@@ -32,11 +36,11 @@ class _ServerSelectionFormState extends ConsumerState<ServerSelectionForm> {
   @override
   Widget build(BuildContext context) {
     final scanner = ref.watch(networkScannerProvider);
-    final List<CLServer> servers = [
+    final servers = <CLServer>[
       ...([
         ...scanner.servers!,
       ]..sort()),
-      CLServer(address: 'myserver.local', port: -1)
+      const CLServer(address: 'myserver.local', port: -1),
     ];
     final textTheme = ShadTheme.of(context).textTheme;
     return ShadForm(
@@ -52,17 +56,17 @@ class _ServerSelectionFormState extends ConsumerState<ServerSelectionForm> {
               alignment: Alignment.centerRight,
               child: ShadButton.ghost(
                 onPressed: widget.onRefresh,
-                child: Text('\u21BA Refresh',
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                    )),
+                child: const Text(
+                  '\u21BA Refresh',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
             ...[
               ShadRadioGroupFormField<CLServer>(
-                enabled: true,
-                initialValue: null,
                 id: 'server',
                 onChanged: (v) {
                   if (v != selectedServer) {
@@ -84,7 +88,7 @@ class _ServerSelectionFormState extends ConsumerState<ServerSelectionForm> {
                     value: e,
                     label: Text(
                       e.port == -1
-                          ? "Enter Manually"
+                          ? 'Enter Manually'
                           : "${e.id?.toString() ?? "???"}(${e.baseURL})",
                       style: (e.id != null || e.port == -1)
                           ? textTheme.small
@@ -94,22 +98,22 @@ class _ServerSelectionFormState extends ConsumerState<ServerSelectionForm> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 32.0),
+                padding: const EdgeInsets.only(left: 32),
                 child: ShadInputFormField(
-                  id: "manualEntry",
+                  id: 'manualEntry',
                   placeholder: const Text('Server URL'),
                   enabled: isManual,
                   keyboardType: TextInputType.url,
                   validator: (v) {
                     if (isManual) {
                       if (v.isEmpty) {
-                        return "http://host:port";
+                        return 'http://host:port';
                       }
                       if (v.isURL()) {
                         return null;
                       }
 
-                      return "invalid address";
+                      return 'invalid address';
                     } else {
                       return null;
                     }
@@ -122,12 +126,15 @@ class _ServerSelectionFormState extends ConsumerState<ServerSelectionForm> {
                   if (formKey.currentState!.saveAndValidate()) {
                     formValue = formKey.currentState!.value;
 
-                    if (formValue.containsKey("server")) {
-                      var server = formValue["server"] as CLServer;
+                    if (formValue.containsKey('server')) {
+                      var server = formValue['server'] as CLServer;
                       if (server.port == -1) {
-                        final serverurl = Uri.parse(formValue["manualEntry"]);
+                        final serverurl =
+                            Uri.parse(formValue['manualEntry'] as String);
                         server = CLServer(
-                            address: serverurl.host, port: serverurl.port);
+                          address: serverurl.host,
+                          port: serverurl.port,
+                        );
                       }
                       //
                       final serverWithID = await server.withId();
@@ -142,12 +149,14 @@ class _ServerSelectionFormState extends ConsumerState<ServerSelectionForm> {
                       }
                     }
                   } else {
-                    error = "serverNotfound";
+                    error = 'serverNotfound';
                   }
                 },
               ),
               if (error != null)
-                ShadBadge.destructive(child: Text("Failed to connect to host")),
+                const ShadBadge.destructive(
+                  child: Text('Failed to connect to host'),
+                ),
               if (formValue.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 24, left: 12),
@@ -163,8 +172,8 @@ class _ServerSelectionFormState extends ConsumerState<ServerSelectionForm> {
                     ],
                   ),
                 ),
-            ]
-          ]
+            ],
+          ],
         ],
       ),
     );

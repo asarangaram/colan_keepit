@@ -9,21 +9,22 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
+  collection: ^1.19.0
+  connectivity_plus: ^6.1.3
   flutter:
     sdk: flutter
-  collection: ^1.19.0
+  flutter_riverpod: ^2.5.1
   http: ^1.3.0
   meta: ^1.15.0
-  flutter_riverpod: ^2.5.1
-  store_revised:
-    path: ../store_revised
-  connectivity_plus: ^6.1.3
   nsd: ^4.0.3
   shadcn_ui:
     path: /Users/anandasarangaram/Work/flutter-shadcn-ui
   shared_preferences: ^2.5.2
+  store_revised:
+    path: ../store_revised
 
 dev_dependencies:
+  flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  very_good_analysis: ^7.0.0

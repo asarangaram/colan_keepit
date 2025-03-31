@@ -58,8 +58,9 @@ class CLEntityGalleryTabState extends ConsumerState<CLEntityGalleryTab> {
 
   @override
   void dispose() {
-    _scrollController.removeListener(_listener);
-    _scrollController.dispose();
+    _scrollController
+      ..removeListener(_listener)
+      ..dispose();
     super.dispose();
   }
 

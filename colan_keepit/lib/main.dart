@@ -9,7 +9,8 @@ import 'views/registerred_server_view.dart';
 import 'views/server_selector_view.dart';
 
 void main() {
-  runApp(Solid(
+  runApp(
+    Solid(
       providers: [
         Provider<Signal<ThemeMode>>(create: () => Signal(ThemeMode.light)),
       ],
@@ -26,9 +27,11 @@ void main() {
             brightness: Brightness.dark,
             colorScheme: const ShadZincColorScheme.dark(),
           ),
-          home: riverpod.ProviderScope(child: MainApp()),
+          home: const riverpod.ProviderScope(child: MainApp()),
         );
-      }));
+      },
+    ),
+  );
 }
 
 class MainApp extends riverpod.ConsumerWidget {
@@ -38,10 +41,10 @@ class MainApp extends riverpod.ConsumerWidget {
   Widget build(BuildContext context, riverpod.WidgetRef ref) {
     final server = ref.watch(serverProvider);
 
-    if ((server.isRegistered)) {
+    if (server.isRegistered) {
       return const RegisterredServerView();
     } else {
-      return ServerSelectorView();
+      return const ServerSelectorView();
     }
   }
 }

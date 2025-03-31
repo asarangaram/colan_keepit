@@ -34,24 +34,25 @@ class _ServerSelectorViewState extends ConsumerState<ServerSelectorView> {
     final scanner = ref.watch(networkScannerProvider);
     return BaseScaffold(
       appBarTitleWidget: ListTile(
-        leading: SizedBox.shrink(),
-        title: Text('KeepIt Media Viewer'),
+        leading: const SizedBox.shrink(),
+        title: const Text('KeepIt Media Viewer'),
         titleTextStyle: textTheme.h4,
       ),
       children: [
         if (!scanner.lanStatus)
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
-            child: ShadAlert.destructive(
+            child: const ShadAlert.destructive(
               iconData: Icons.network_check, // network off !!
               title: Text('Offline'),
               description: Text(
-                  'You are not connected to any Home Network. Check your connection and try again.'),
+                'You are not connected to any Home Network. Check your connection and try again.',
+              ),
             ),
           )
         else ...[
           Text(
-            "Setup a CoLAN server and connect to it. "
+            'Setup a CoLAN server and connect to it. '
             "If you can't see your server, you may enter the address manually",
             style: textTheme.large,
           ),
@@ -61,23 +62,21 @@ class _ServerSelectorViewState extends ConsumerState<ServerSelectorView> {
             ShadPopover(
               controller: popoverController,
               popover: (_) => SizedBox(
-                  width: 288,
-                  child: ServerSelectionForm(
-                    onRefresh:
-                        ref.watch(networkScannerProvider.notifier).search,
-                    onDone: (selectedServer) {
-                      ref
-                          .read(serverProvider.notifier)
-                          .register(selectedServer);
-                      popoverController.toggle();
-                    },
-                  )),
+                width: 288,
+                child: ServerSelectionForm(
+                  onRefresh: ref.watch(networkScannerProvider.notifier).search,
+                  onDone: (selectedServer) {
+                    ref.read(serverProvider.notifier).register(selectedServer);
+                    popoverController.toggle();
+                  },
+                ),
+              ),
               child: ShadButton.outline(
                 onPressed: popoverController.toggle,
                 child: const Text('Connect to server'),
               ),
             ),
-        ]
+        ],
       ],
     );
   }

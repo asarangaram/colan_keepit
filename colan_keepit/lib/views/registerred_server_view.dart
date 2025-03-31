@@ -31,8 +31,9 @@ class _RegisterredServerViewState extends ConsumerState<RegisterredServerView> {
 
   @override
   void dispose() {
-    _scrollController.removeListener(_scrollListener);
-    _scrollController.dispose();
+    _scrollController
+      ..removeListener(_scrollListener)
+      ..dispose();
     super.dispose();
   }
 
@@ -51,48 +52,50 @@ class _RegisterredServerViewState extends ConsumerState<RegisterredServerView> {
     final textTheme = ShadTheme.of(context).textTheme;
 
     return BaseScaffold(
-        appBarTitleWidget: RefreshIndicator(
-          onRefresh: ref.read(serverMediaProvider.notifier).refresh,
-          child: ListTile(
-            leading: SizedBox.shrink(),
-            title: Text('KeepIt Media Viewer'),
-            titleTextStyle: textTheme.lead,
-            isThreeLine: true,
-            subtitle: Text(
-              '${server.identity!.identifier}@${server.identity!.address}:${server.identity!.port}',
-              style: textTheme.lead,
+      appBarTitleWidget: RefreshIndicator(
+        onRefresh: ref.read(serverMediaProvider.notifier).refresh,
+        child: ListTile(
+          leading: const SizedBox.shrink(),
+          title: const Text('KeepIt Media Viewer'),
+          titleTextStyle: textTheme.lead,
+          isThreeLine: true,
+          subtitle: Text(
+            '${server.identity!.identifier}@${server.identity!.address}:${server.identity!.port}',
+            style: textTheme.lead,
+          ),
+        ),
+      ),
+      appBarActions: [
+        Tooltip(
+          message: 'Reload latest',
+          child: ShadButton.ghost(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            onPressed: () => ref.read(serverMediaProvider.notifier).refresh(),
+            backgroundColor: textTheme.blockquote.backgroundColor,
+            child: SizedBox.square(
+              child: Icon(clIcons.syncIcons.refreshIndicator),
             ),
           ),
         ),
-        appBarActions: [
-          Tooltip(
-            message: "Reload latest",
-            child: ShadButton.ghost(
-              padding: EdgeInsets.symmetric(horizontal: 4),
-              onPressed: () => ref.read(serverMediaProvider.notifier).refresh(),
-              backgroundColor: textTheme.blockquote.backgroundColor,
-              child: SizedBox.square(
-                  child: Icon(clIcons.syncIcons.refreshIndicator)),
-            ),
+        Tooltip(
+          message: 'Disconnect from server',
+          child: ShadButton.ghost(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            onPressed: () => ref.read(serverProvider.notifier).deregister(),
+            backgroundColor: textTheme.blockquote.backgroundColor,
+            child: SizedBox.square(child: clIcons.syncIcons.disconnect),
           ),
-          Tooltip(
-            message: "Disconnect from server",
-            child: ShadButton.ghost(
-              padding: EdgeInsets.symmetric(horizontal: 4),
-              onPressed: () => ref.read(serverProvider.notifier).deregister(),
-              backgroundColor: textTheme.blockquote.backgroundColor,
-              child: SizedBox.square(child: clIcons.syncIcons.disconnect),
-            ),
-          )
-        ],
-        wrapChildrenInScrollable: false,
-        wrapSingleChildInColumn: false,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: ServerMediaList(),
-          )
-        ]);
+        ),
+      ],
+      wrapChildrenInScrollable: false,
+      wrapSingleChildInColumn: false,
+      children: const [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          child: ServerMediaList(),
+        ),
+      ],
+    );
   }
 }
 
@@ -113,19 +116,20 @@ class _ServerMediaListState extends ConsumerState<ServerMediaList> {
     final serverMedia = ref.watch(serverMediaProvider);
     if (!server.canSync) {
       if (server.workingOffline) {
-        return Text('Working offline, go online to view');
+        return const Text('Working offline, go online to view');
       } else if (!scanner.lanStatus) {
-        return Text('check network connection');
+        return const Text('check network connection');
       } else {
-        return Text('server not reachable');
+        return const Text('server not reachable');
       }
     }
     if (serverMedia.items.isEmpty) {
-      return Text('Nothing to show');
+      return const Text('Nothing to show');
     }
     return SizedBox(
       child: CLEntityGridView(
-        viewIdentifier: ViewIdentifier(parentID: "server", viewId: "mediaview"),
+        viewIdentifier:
+            const ViewIdentifier(parentID: 'server', viewId: 'mediaview'),
         numColumns: 5,
         entities: serverMedia.items,
         groupMethod: GroupMethod.byOriginalDate,
@@ -133,12 +137,14 @@ class _ServerMediaListState extends ConsumerState<ServerMediaList> {
           // identifier should be passed from caller FIXTHIS
           return MediaPreviewWithOverlays(
             media: entity as CLMedia,
-            parentIdentifier: "server",
+            parentIdentifier: 'server',
           );
         },
-        labelBuilder: (BuildContext context,
-            List<GalleryGroupCLEntity<CLEntity>> galleryMap,
-            GalleryGroupCLEntity<CLEntity> gallery) {
+        labelBuilder: (
+          BuildContext context,
+          List<GalleryGroupCLEntity<CLEntity>> galleryMap,
+          GalleryGroupCLEntity<CLEntity> gallery,
+        ) {
           return gallery.label == null
               ? null
               : Text(
@@ -147,42 +153,45 @@ class _ServerMediaListState extends ConsumerState<ServerMediaList> {
                   style: ShadTheme.of(context).textTheme.lead,
                 );
         },
-        headerWidgetsBuilder: (BuildContext context,
-            List<GalleryGroupCLEntity<CLEntity>> galleryMap) {
+        headerWidgetsBuilder: (
+          BuildContext context,
+          List<GalleryGroupCLEntity<CLEntity>> galleryMap,
+        ) {
           return [];
         },
-        footerWidgetsBuilder: (BuildContext context,
-            List<GalleryGroupCLEntity<CLEntity>> galleryMap) {
+        footerWidgetsBuilder: (
+          BuildContext context,
+          List<GalleryGroupCLEntity<CLEntity>> galleryMap,
+        ) {
           return [
             if (serverMedia.isLoading)
               const Center(
                 child: Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(8),
                   child: CircularProgressIndicator(),
                 ),
               )
             else if (serverMedia.metaInfo.pagination.hasNext)
               ShadButton.link(
-                  onPressed:
-                      ref.read(serverMediaProvider.notifier).fetchNextPage,
-                  child: Text(
-                    'Load More',
-                    style: ShadTheme.of(context).textTheme.lead,
-                  ))
+                onPressed: ref.read(serverMediaProvider.notifier).fetchNextPage,
+                child: Text(
+                  'Load More',
+                  style: ShadTheme.of(context).textTheme.lead,
+                ),
+              )
             else
               Center(
-                  child: Text(
-                'No more data on Server',
-                style: ShadTheme.of(context).textTheme.lead,
-              ))
+                child: Text(
+                  'No more data on Server',
+                  style: ShadTheme.of(context).textTheme.lead,
+                ),
+              ),
           ];
         },
       ),
     );
   }
 }
-
-
 
 /**
  * 

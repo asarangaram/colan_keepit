@@ -16,8 +16,8 @@ class ServerMediaNotifier extends StateNotifier<ServerMedia> {
   Future<void> initialize() async {
     if (server.canSync) {
       state = state.copyWith(isLoading: true);
-      final map = await server.identity!
-          .fetchMediaPage(perPage: 5, page: 1, types: ['image']);
+      final map =
+          await server.identity!.fetchMediaPage(perPage: 5, types: ['image']);
       state = ServerMedia.fromMap(map);
     }
   }
@@ -28,27 +28,29 @@ class ServerMediaNotifier extends StateNotifier<ServerMedia> {
         !state.isLoading) {
       state = state.copyWith(isLoading: true);
       final map = await server.identity!.fetchMediaPage(
-          perPage: state.metaInfo.pagination.perPage,
-          page: state.metaInfo.pagination.currentPage + 1,
-          currentVersion: state.metaInfo.currentVersion,
-          lastSyncedVersion: state.metaInfo.lastSyncedVersion,
-          types: ['image']);
+        perPage: state.metaInfo.pagination.perPage,
+        page: state.metaInfo.pagination.currentPage + 1,
+        currentVersion: state.metaInfo.currentVersion,
+        lastSyncedVersion: state.metaInfo.lastSyncedVersion,
+        types: ['image'],
+      );
       final currentPage = ServerMedia.fromMap(map);
 
       state = state.copyWith(
-          items: [...state.items, ...currentPage.items],
-          metaInfo: currentPage.metaInfo,
-          isLoading: false);
+        items: [...state.items, ...currentPage.items],
+        metaInfo: currentPage.metaInfo,
+        isLoading: false,
+      );
     }
   }
 
   Future<void> refresh() async {
     if (server.canSync && !state.isLoading) {
       final map = await server.identity!.fetchMediaPage(
-          perPage: 5,
-          page: 1,
-          types: ['image'],
-          currentVersion: state.metaInfo.latestVersion);
+        perPage: 5,
+        types: ['image'],
+        currentVersion: state.metaInfo.latestVersion,
+      );
       state = ServerMedia.fromMap(map);
     }
   }
@@ -72,7 +74,7 @@ class ServerMediaNotifier extends StateNotifier<ServerMedia> {
 final serverMediaProvider =
     StateNotifierProvider<ServerMediaNotifier, ServerMedia>((ref) {
   final server = ref.watch(serverProvider);
-  // ignore: deprecated_member_use
+  // ignore: deprecated_member_use - when upgrade, fix this
   ref.listenSelf((prev, curr) {
     ServerMediaNotifier.log(curr.items.length.toString());
   });

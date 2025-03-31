@@ -12,6 +12,18 @@ class Pagination {
     required this.totalItems,
     required this.totalPages,
   });
+
+  factory Pagination.fromMap(Map<String, dynamic> map) {
+    return Pagination(
+      currentPage: map['currentPage'] as int,
+      perPage: map['perPage'] as int,
+      totalItems: map['totalItems'] as int,
+      totalPages: map['totalPages'] as int,
+    );
+  }
+
+  factory Pagination.fromJson(String source) =>
+      Pagination.fromMap(json.decode(source) as Map<String, dynamic>);
   final int currentPage;
   final int perPage;
   final int totalItems;
@@ -40,19 +52,7 @@ class Pagination {
     };
   }
 
-  factory Pagination.fromMap(Map<String, dynamic> map) {
-    return Pagination(
-      currentPage: map['currentPage'] as int,
-      perPage: map['perPage'] as int,
-      totalItems: map['totalItems'] as int,
-      totalPages: map['totalPages'] as int,
-    );
-  }
-
   String toJson() => json.encode(toMap());
-
-  factory Pagination.fromJson(String source) =>
-      Pagination.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -88,6 +88,18 @@ class MetaInfo {
     required this.latestVersion,
     required this.pagination,
   });
+
+  factory MetaInfo.fromMap(Map<String, dynamic> map) {
+    return MetaInfo(
+      currentVersion: map['currentVersion'] as int,
+      lastSyncedVersion: map['lastSyncedVersion'] as int,
+      latestVersion: map['latestVersion'] as int,
+      pagination: Pagination.fromMap(map['pagination'] as Map<String, dynamic>),
+    );
+  }
+
+  factory MetaInfo.fromJson(String source) =>
+      MetaInfo.fromMap(json.decode(source) as Map<String, dynamic>);
   final int currentVersion;
   final int lastSyncedVersion;
   final int latestVersion;
@@ -116,19 +128,7 @@ class MetaInfo {
     };
   }
 
-  factory MetaInfo.fromMap(Map<String, dynamic> map) {
-    return MetaInfo(
-      currentVersion: map['currentVersion'] as int,
-      lastSyncedVersion: map['lastSyncedVersion'] as int,
-      latestVersion: map['latestVersion'] as int,
-      pagination: Pagination.fromMap(map['pagination'] as Map<String, dynamic>),
-    );
-  }
-
   String toJson() => json.encode(toMap());
-
-  factory MetaInfo.fromJson(String source) =>
-      MetaInfo.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -162,18 +162,37 @@ class ServerMedia {
     this.isLoading = false,
   });
 
+  factory ServerMedia.fromMap(Map<String, dynamic> map) {
+    return ServerMedia(
+      items: List<CLMedia>.from(
+        (map['items'] as Iterable<dynamic>).map<CLMedia>(
+          (x) {
+            return CLMedia.fromMap(x as Map<String, dynamic>);
+          },
+        ),
+      ),
+      metaInfo: MetaInfo.fromMap(map['metaInfo'] as Map<String, dynamic>),
+    );
+  }
+
+  factory ServerMedia.fromJson(String source) =>
+      ServerMedia.fromMap(json.decode(source) as Map<String, dynamic>);
+
   factory ServerMedia.reset(int perPage) {
     return ServerMedia(
-        items: [],
-        metaInfo: MetaInfo(
-            currentVersion: 0,
-            lastSyncedVersion: 0,
-            latestVersion: 0,
-            pagination: Pagination(
-                currentPage: 0,
-                perPage: perPage,
-                totalItems: 0,
-                totalPages: 0)));
+      items: const [],
+      metaInfo: MetaInfo(
+        currentVersion: 0,
+        lastSyncedVersion: 0,
+        latestVersion: 0,
+        pagination: Pagination(
+          currentPage: 0,
+          perPage: perPage,
+          totalItems: 0,
+          totalPages: 0,
+        ),
+      ),
+    );
   }
   final List<CLMedia> items;
   final MetaInfo metaInfo;
@@ -198,23 +217,7 @@ class ServerMedia {
     };
   }
 
-  factory ServerMedia.fromMap(Map<String, dynamic> map) {
-    return ServerMedia(
-      items: List<CLMedia>.from(
-        map['items'].map<CLMedia>(
-          (x) {
-            return CLMedia.fromMap(x as Map<String, dynamic>);
-          },
-        ),
-      ),
-      metaInfo: MetaInfo.fromMap(map['metaInfo'] as Map<String, dynamic>),
-    );
-  }
-
   String toJson() => json.encode(toMap());
-
-  factory ServerMedia.fromJson(String source) =>
-      ServerMedia.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() =>

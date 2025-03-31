@@ -5,8 +5,8 @@ import 'app_bar.dart';
 
 class BaseScaffold extends StatefulWidget {
   const BaseScaffold({
-    super.key,
     required this.children,
+    super.key,
     this.appBarTitle,
     this.editable,
     this.crossAxisAlignment = CrossAxisAlignment.center,
@@ -38,10 +38,12 @@ class _BaseScaffoldState extends State<BaseScaffold> {
 
   @override
   void initState() {
-    _controller = MultiSplitViewController(areas: [
-      for (final child in widget.children)
-        Area(builder: (context, area) => child),
-    ]);
+    _controller = MultiSplitViewController(
+      areas: [
+        for (final child in widget.children)
+          Area(builder: (context, area) => child),
+      ],
+    );
 
     super.initState();
   }
@@ -82,7 +84,6 @@ class _BaseScaffoldState extends State<BaseScaffold> {
             child: Center(
               child: Column(
                 spacing: widget.gap,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: widget.editable!,
               ),
             ),

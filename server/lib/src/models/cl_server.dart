@@ -234,7 +234,7 @@ class CLServer implements Comparable<CLServer> {
     int? currentVersion,
     int? lastSyncedVersion,
   }) async {
-    String endPoint0 = "$endPoint?";
+    var endPoint0 = '$endPoint?';
     endPoint0 = endPoint0 + types.map((type) => 'type=$type').join('&');
     endPoint0 = '$endPoint0&per_page=$perPage';
     endPoint0 = '$endPoint0&page=$page';
